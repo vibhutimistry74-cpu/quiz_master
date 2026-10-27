@@ -1,0 +1,100 @@
+@model QuizMaster.Models.Quiz
+@{
+    ViewData["Title"] = "Instructions - " + Model.Title;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <span class="badge-category mb-2">Examination Guidelines</span>
+                <h1 class="display-6 fw-bold mb-1">@Model.Title</h1>
+                <p class="text-muted">Please read all guidelines and examination rules before commencing.</p>
+            </div>
+
+            <div class="qm-card p-4 p-md-5 mb-4">
+                <!-- Summary bar -->
+                <div class="d-flex justify-content-around p-3 bg-light rounded-3 mb-4 text-center border">
+                    <div>
+                        <div class="text-muted small">Questions</div>
+                        <strong class="text-primary fs-5">@Model.TotalQuestions</strong>
+                    </div>
+                    <div class="border-start ps-3">
+                        <div class="text-muted small">Duration</div>
+                        <strong class="text-primary fs-5">@Model.DurationMinutes Mins</strong>
+                    </div>
+                    <div class="border-start ps-3">
+                        <div class="text-muted small">Passing Threshold</div>
+                        <strong class="text-success fs-5">@Model.PassingPercentage%</strong>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-3"><i class="bi bi-shield-exclamation text-warning me-2"></i> Standard Examination Rules:</h5>
+
+                <div class="d-flex flex-column gap-3 mb-4">
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="badge bg-primary rounded-circle p-2" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">1</div>
+                        <div>
+                            <strong class="d-block text-dark">Read every question carefully</strong>
+                            <span class="text-muted small">Analyze all four available options before committing your answer selection.</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="badge bg-primary rounded-circle p-2" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">2</div>
+                        <div>
+                            <strong class="d-block text-dark">Select the best answer</strong>
+                            <span class="text-muted small">Each question contains only one single correct answer (A, B, C, or D).</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="badge bg-primary rounded-circle p-2" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">3</div>
+                        <div>
+                            <strong class="d-block text-dark">You can navigate between questions</strong>
+                            <span class="text-muted small">Use the Previous and Next buttons, or click any number on the question palette to jump directly.</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="badge bg-primary rounded-circle p-2" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">4</div>
+                        <div>
+                            <strong class="d-block text-dark">Unanswered questions receive zero marks</strong>
+                            <span class="text-muted small">There is no negative grading penalty, so make sure to answer every question.</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="badge bg-primary rounded-circle p-2" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">5</div>
+                        <div>
+                            <strong class="d-block text-dark">Quiz automatically submits when time expires</strong>
+                            <span class="text-muted small">The countdown timer runs in real-time. If the clock reaches 00:00, all current answers are submitted automatically.</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="badge bg-primary rounded-circle p-2" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">6</div>
+                        <div>
+                            <strong class="d-block text-dark">Results are calculated automatically</strong>
+                            <span class="text-muted small">Upon submission, your percentage score is instantly generated alongside a comprehensive answer breakdown.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning d-flex align-items-center gap-2 small mb-4">
+                    <i class="bi bi-info-circle-fill fs-5"></i>
+                    <span>Once you start the examination, the timer will begin running. Ensure a stable internet connection.</span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <a asp-controller="Quiz" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-qm-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Details
+                    </a>
+                    <a asp-controller="Quiz" asp-action="Start" asp-route-id="@Model.Id" class="btn btn-qm-primary btn-lg px-4">
+                        <i class="bi bi-play-circle-fill"></i> Start Quiz Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

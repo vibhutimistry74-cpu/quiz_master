@@ -1,0 +1,142 @@
+@model QuizMaster.Models.LeaderboardViewModel
+@{
+    ViewData["Title"] = "Global Examination Leaderboard";
+    var topThree = Model.TopThree;
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <span class="badge-category mb-2">Hall of Fame</span>
+        <h1 class="display-5 fw-bold mb-1">Examination Leaderboard</h1>
+        <p class="lead text-muted" style="max-width: 620px; margin: 0 auto;">
+            Celebrating the top-performing students across all standardized online assessments.
+        </p>
+    </div>
+
+    <!-- Top 3 Podium Cards -->
+    @if (topThree.Count >= 3)
+    {
+        <div class="row g-4 align-items-end justify-content-center mb-5 pt-3">
+            <!-- 2nd Place (Silver) -->
+            <div class="col-md-4 col-sm-6 order-2 order-md-1">
+                <div class="podium-card second">
+                    <div class="podium-medal silver">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <span class="badge bg-secondary mb-2 px-3">2nd Place</span>
+                    <h5 class="fw-bold mb-1">@topThree[1].StudentName</h5>
+                    <p class="text-muted small mb-2">@topThree[1].QuizTitle</p>
+                    <div class="display-6 fw-bold text-dark mb-1">@topThree[1].Percentage%</div>
+                    <span class="small text-muted">@topThree[1].Score / @topThree[1].TotalMarks Marks</span>
+                </div>
+            </div>
+
+            <!-- 1st Place (Gold) -->
+            <div class="col-md-4 col-sm-6 order-1 order-md-2">
+                <div class="podium-card first">
+                    <div class="podium-medal gold">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+                    <span class="badge bg-warning text-dark mb-2 px-3 fw-bold">Champion • 1st</span>
+                    <h4 class="fw-bold mb-1">@topThree[0].StudentName</h4>
+                    <p class="text-muted small mb-2">@topThree[0].QuizTitle</p>
+                    <div class="display-5 fw-bold text-warning-emphasis mb-1">@topThree[0].Percentage%</div>
+                    <span class="small text-muted">@topThree[0].Score / @topThree[0].TotalMarks Marks</span>
+                </div>
+            </div>
+
+            <!-- 3rd Place (Bronze) -->
+            <div class="col-md-4 col-sm-6 order-3">
+                <div class="podium-card third">
+                    <div class="podium-medal bronze">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <span class="badge mb-2 px-3" style="background-color: #ea580c; color: white;">3rd Place</span>
+                    <h5 class="fw-bold mb-1">@topThree[2].StudentName</h5>
+                    <p class="text-muted small mb-2">@topThree[2].QuizTitle</p>
+                    <div class="display-6 fw-bold text-dark mb-1">@topThree[2].Percentage%</div>
+                    <span class="small text-muted">@topThree[2].Score / @topThree[2].TotalMarks Marks</span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Complete Rankings Table -->
+    <div class="qm-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">All Candidate Rankings</h4>
+            <span class="badge bg-light text-muted border">@Model.Items.Count Ranked Candidates</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 80px;">Rank</th>
+                        <th>Student</th>
+                        <th>Quiz Title</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                @if (item.Rank == 1)
+                                {
+                                    <span class="badge rounded-circle p-2 bg-warning text-dark fs-6" title="1st Place Gold">🥇</span>
+                                }
+                                else if (item.Rank == 2)
+                                {
+                                    <span class="badge rounded-circle p-2 bg-secondary text-white fs-6" title="2nd Place Silver">🥈</span>
+                                }
+                                else if (item.Rank == 3)
+                                {
+                                    <span class="badge rounded-circle p-2 bg-danger bg-opacity-75 text-white fs-6" title="3rd Place Bronze">🥉</span>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold text-muted ps-2">#@item.Rank</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-circle" style="width: 34px; height: 34px; border-radius: 50%; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;">
+                                        @item.StudentName.Substring(0, 1)
+                                    </div>
+                                    <div>
+                                        <strong class="d-block text-dark">@item.StudentName</strong>
+                                        <span class="text-muted small">@item.StudentEmail</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge-category">@item.QuizTitle</span>
+                            </td>
+                            <td>
+                                <strong>@item.Score</strong> / @item.TotalMarks
+                            </td>
+                            <td>
+                                <span class="fw-bold @(item.Percentage >= 50 ? "text-success" : "text-danger")">
+                                    @item.Percentage%
+                                </span>
+                            </td>
+                            <td class="text-muted small">
+                                @item.Date.ToString("MMM dd, yyyy")
+                            </td>
+                            <td>
+                                <span class="badge-status-@item.Status.ToLowerInvariant()">
+                                    @item.Status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

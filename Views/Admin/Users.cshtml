@@ -1,0 +1,114 @@
+@model List<QuizMaster.Models.User>
+@{
+    ViewData["Title"] = "Manage Students & Users";
+}
+
+<div class="admin-layout-wrapper">
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-shield-lock-fill text-warning fs-4"></i>
+                <div>
+                    <h6 class="text-white fw-bold mb-0">Admin Portal</h6>
+                    <span class="text-muted small">System Operations</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="admin-sidebar-nav">
+            <a asp-controller="Admin" asp-action="Dashboard" class="admin-nav-item">
+                <i class="bi bi-speedometer2 admin-nav-icon"></i> Dashboard
+            </a>
+            <a asp-controller="Admin" asp-action="Quizzes" class="admin-nav-item">
+                <i class="bi bi-journal-text admin-nav-icon"></i> Manage Quizzes
+            </a>
+            <a asp-controller="Admin" asp-action="Users" class="admin-nav-item active">
+                <i class="bi bi-people admin-nav-icon"></i> Manage Students
+            </a>
+            <a asp-controller="Admin" asp-action="Results" class="admin-nav-item">
+                <i class="bi bi-bar-chart-line admin-nav-icon"></i> Examination Results
+            </a>
+            <a asp-controller="Leaderboard" asp-action="Index" class="admin-nav-item">
+                <i class="bi bi-trophy admin-nav-icon"></i> View Leaderboard
+            </a>
+            <div class="border-top border-secondary border-opacity-25 my-2"></div>
+            <a asp-controller="Home" asp-action="Index" class="admin-nav-item">
+                <i class="bi bi-house admin-nav-icon"></i> View Public Site
+            </a>
+        </nav>
+    </aside>
+
+    <main class="admin-content-area">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h2 class="display-6 fw-bold mb-1">User & Student Directory</h2>
+                <p class="text-muted mb-0">Overview of all registered candidate profiles and administrators.</p>
+            </div>
+            <span class="badge bg-light text-muted border px-3 py-2 fs-6">
+                Total Users: @Model.Count
+            </span>
+        </div>
+
+        <div class="qm-card p-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User Name</th>
+                            <th>Email Address</th>
+                            <th>Role</th>
+                            <th>Joined Date</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td><strong>#@user.Id</strong></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-circle" style="width: 36px; height: 36px; border-radius: 50%; background: #eef2ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                                            @user.FullName.Substring(0, 1)
+                                        </div>
+                                        <strong class="text-dark">@user.FullName</strong>
+                                    </div>
+                                </td>
+                                <td>@user.Email</td>
+                                <td>
+                                    <span class="role-pill @(user.Role == "Admin" ? "role-admin" : "role-student")">
+                                        @user.Role
+                                    </span>
+                                </td>
+                                <td class="text-muted small">@user.JoinedDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <span class="badge @(user.IsActive ? "bg-success" : "bg-danger")">
+                                        @(user.IsActive ? "Active" : "Deactivated")
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    @if (user.Role != "Admin")
+                                    {
+                                        <form asp-controller="Admin" asp-action="ToggleUserStatus" asp-route-id="@user.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                                                <i class="bi @(user.IsActive ? "bi-person-dash" : "bi-person-check")"></i>
+                                                @(user.IsActive ? "Deactivate" : "Activate")
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-muted border">Protected</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>

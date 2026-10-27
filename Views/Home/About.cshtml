@@ -1,0 +1,156 @@
+@{
+    ViewData["Title"] = "About QuizMaster";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="text-center mb-5">
+                <span class="badge-category mb-2">College Project Presentation</span>
+                <h1 class="display-5 fw-bold">About QuizMaster</h1>
+                <p class="lead text-muted" style="max-width: 720px; margin: 0 auto;">
+                    Online Quiz & Examination System built using ASP.NET Core MVC and .NET 10 with a completely self-contained, in-memory state architecture.
+                </p>
+            </div>
+
+            <div class="qm-card p-4 p-md-5 mb-5">
+                <h3 class="fw-bold mb-3">Project Overview</h3>
+                <p class="text-sub">
+                    <strong>QuizMaster</strong> is an ASP.NET Core MVC based online quiz and examination system. The application provides separate, dedicated interfaces for students and administrators. Students can browse quizzes, attempt timed examinations, receive automatically calculated scores and review comprehensive explanations. Administrators can manage quizzes, questions, registered students and examination attempts.
+                </p>
+                <p class="text-sub">
+                    The application adheres strictly to the <strong>Model-View-Controller (MVC)</strong> architectural pattern, utilizing Razor Views, C#, session management, in-memory thread-safe services, and vanilla JavaScript for interactive client-side execution.
+                </p>
+
+                <div class="row g-4 mt-3">
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded-3 bg-light h-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-cpu-fill text-primary fs-4"></i>
+                                <h6 class="fw-bold mb-0">Framework & Language</h6>
+                            </div>
+                            <p class="small text-muted mb-0">
+                                Built with modern <strong>.NET 10</strong>, C# strongly typed models, and ASP.NET Core MVC controller pipelines.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded-3 bg-light h-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-hdd-network-fill text-primary fs-4"></i>
+                                <h6 class="fw-bold mb-0">Zero Database Constraint</h6>
+                            </div>
+                            <p class="small text-muted mb-0">
+                                Runs completely without SQL Server, MySQL, SQLite, or EF Core. Utilizes thread-safe in-memory collections and active HTTP sessions.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded-3 bg-light h-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-ui-checks-grid text-primary fs-4"></i>
+                                <h6 class="fw-bold mb-0">Automated Scoring Engine</h6>
+                            </div>
+                            <p class="small text-muted mb-0">
+                                Features real-time countdown timer, question navigation grid, auto-submit on timeout, and question-by-question review.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Capabilities -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="qm-card p-4 h-100">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="brand-icon" style="width: 44px; height: 44px; border-radius: 8px; background: #dbeafe; color: #1d4ed8; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                                <i class="bi bi-mortarboard-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0">Student Role Capabilities</h5>
+                                <span class="small text-muted">Learner Assessment Flow</span>
+                            </div>
+                        </div>
+                        <ul class="list-unstyled small text-sub d-flex flex-column gap-2 mb-0">
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Register and login via session-based authentication</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Browse, search, filter and sort active quizzes</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Read standardized examination instructions and rules</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Attempt timed multiple-choice questions with auto-save</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Navigate freely between questions via the question navigator</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Submit examination with confirmation modal</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> View instant result with percentage, pass/fail status</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Review answer comparisons and explanations</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> View personal examination history and global leaderboard</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="qm-card p-4 h-100">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="brand-icon" style="width: 44px; height: 44px; border-radius: 8px; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0">Administrator Role Capabilities</h5>
+                                <span class="small text-muted">Examination Management Flow</span>
+                            </div>
+                        </div>
+                        <ul class="list-unstyled small text-sub d-flex flex-column gap-2 mb-0">
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Secure admin login and dashboard overview</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> System performance metrics (quizzes, students, attempts, pass rate)</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Visual analytics charts for category & status breakdown</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Full CRUD operations for quizzes (Create, Edit, Delete)</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Full CRUD operations for examination questions</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Manage registered students (view and toggle active status)</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Comprehensive audit of all student results and attempts</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Search and filter student attempts across quizzes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Credentials -->
+            <div class="p-4 rounded-3 border bg-white shadow-sm mb-5">
+                <h5 class="fw-bold mb-3"><i class="bi bi-key-fill text-primary"></i> Pre-Configured Demonstration Accounts</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Role</th>
+                                <th>Email</th>
+                                <th>Password</th>
+                                <th>Direct Landing Destination</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="role-pill role-admin">Admin</span></td>
+                                <td><strong>admin@quizmaster.com</strong></td>
+                                <td><code>admin123</code></td>
+                                <td><code>/Admin/Dashboard</code></td>
+                            </tr>
+                            <tr>
+                                <td><span class="role-pill role-student">Student</span></td>
+                                <td><strong>student@quizmaster.com</strong></td>
+                                <td><code>student123</code></td>
+                                <td><code>/Student/Dashboard</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="text-center">
+                <a asp-controller="Quiz" asp-action="Index" class="btn btn-qm-primary btn-lg me-2">
+                    <i class="bi bi-compass"></i> Explore Quizzes
+                </a>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-qm-secondary btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Login to Portal
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

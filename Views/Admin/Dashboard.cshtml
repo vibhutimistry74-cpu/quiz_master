@@ -1,0 +1,241 @@
+@model QuizMaster.Models.AdminDashboardStats
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="admin-layout-wrapper">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-shield-lock-fill text-warning fs-4"></i>
+                <div>
+                    <h6 class="text-white fw-bold mb-0">Admin Portal</h6>
+                    <span class="text-muted small">System Operations</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="admin-sidebar-nav">
+            <a asp-controller="Admin" asp-action="Dashboard" class="admin-nav-item active">
+                <i class="bi bi-speedometer2 admin-nav-icon"></i> Dashboard
+            </a>
+            <a asp-controller="Admin" asp-action="Quizzes" class="admin-nav-item">
+                <i class="bi bi-journal-text admin-nav-icon"></i> Manage Quizzes
+            </a>
+            <a asp-controller="Admin" asp-action="Users" class="admin-nav-item">
+                <i class="bi bi-people admin-nav-icon"></i> Manage Students
+            </a>
+            <a asp-controller="Admin" asp-action="Results" class="admin-nav-item">
+                <i class="bi bi-bar-chart-line admin-nav-icon"></i> Examination Results
+            </a>
+            <a asp-controller="Leaderboard" asp-action="Index" class="admin-nav-item">
+                <i class="bi bi-trophy admin-nav-icon"></i> View Leaderboard
+            </a>
+            <div class="border-top border-secondary border-opacity-25 my-2"></div>
+            <a asp-controller="Home" asp-action="Index" class="admin-nav-item">
+                <i class="bi bi-house admin-nav-icon"></i> View Public Site
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Admin Content Area -->
+    <main class="admin-content-area">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h2 class="display-6 fw-bold mb-1">System Overview & Analytics</h2>
+                <p class="text-muted mb-0">Real-time statistics across quizzes, candidates, and exam submissions.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-controller="Admin" asp-action="CreateQuiz" class="btn btn-qm-primary">
+                    <i class="bi bi-plus-circle"></i> Create New Quiz
+                </a>
+            </div>
+        </div>
+
+        <!-- 6 Admin Metric Stat Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-xl-2 col-md-4 col-sm-6">
+                <div class="admin-stat-card">
+                    <div>
+                        <div class="admin-stat-value">@Model.TotalQuizzes</div>
+                        <div class="admin-stat-label">Total Quizzes</div>
+                    </div>
+                    <div class="admin-stat-icon-wrapper icon-purple">
+                        <i class="bi bi-journal-code"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+                <div class="admin-stat-card">
+                    <div>
+                        <div class="admin-stat-value">@Model.TotalQuestions</div>
+                        <div class="admin-stat-label">Total Questions</div>
+                    </div>
+                    <div class="admin-stat-icon-wrapper icon-blue">
+                        <i class="bi bi-question-diamond-fill"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+                <div class="admin-stat-card">
+                    <div>
+                        <div class="admin-stat-value">@Model.TotalStudents</div>
+                        <div class="admin-stat-label">Total Students</div>
+                    </div>
+                    <div class="admin-stat-icon-wrapper icon-amber">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+                <div class="admin-stat-card">
+                    <div>
+                        <div class="admin-stat-value">@Model.TotalAttempts</div>
+                        <div class="admin-stat-label">Total Attempts</div>
+                    </div>
+                    <div class="admin-stat-icon-wrapper icon-indigo">
+                        <i class="bi bi-ui-checks"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+                <div class="admin-stat-card">
+                    <div>
+                        <div class="admin-stat-value text-info">@Model.AverageScore%</div>
+                        <div class="admin-stat-label">Average Score</div>
+                    </div>
+                    <div class="admin-stat-icon-wrapper icon-blue">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+                <div class="admin-stat-card">
+                    <div>
+                        <div class="admin-stat-value text-success">@Model.PassRate%</div>
+                        <div class="admin-stat-label">Pass Rate</div>
+                    </div>
+                    <div class="admin-stat-icon-wrapper icon-green">
+                        <i class="bi bi-patch-check-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Visual Section (Pure CSS/HTML Bar Charts) -->
+        <div class="row g-4 mb-4">
+            <!-- Category Distribution Bar Chart -->
+            <div class="col-lg-6">
+                <div class="chart-box">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-pie-chart-fill text-primary me-2"></i> Category Distribution</h5>
+                    <p class="text-muted small mb-4">Breakdown of quizzes configured per subject discipline.</p>
+
+                    @foreach (var cat in Model.CategoryBreakdown)
+                    {
+                        double percent = Model.TotalQuizzes > 0 ? (double)cat.Value / Model.TotalQuizzes * 100 : 0;
+                        <div class="chart-bar-item">
+                            <div class="chart-bar-header">
+                                <span>@cat.Key</span>
+                                <span class="text-muted">@cat.Value Quiz@(cat.Value > 1 ? "zes" : "") (@percent.ToString("0")%)</span>
+                            </div>
+                            <div class="chart-bar-track">
+                                <div class="chart-bar-progress" style="width: @percent%; background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Pass / Fail & Highlight Metrics -->
+            <div class="col-lg-6">
+                <div class="chart-box">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-award-fill text-warning me-2"></i> Examination Highlights</h5>
+                    <p class="text-muted small mb-3">Key candidate assessment indicators.</p>
+
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-muted small">Most Popular Examination</span>
+                            <span class="badge bg-primary">Highest Volume</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-0">@Model.MostPopularQuiz</h5>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-muted small">Highest Scoring Subject</span>
+                            <span class="badge bg-success">Top Average</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-0">@Model.HighestScoringQuiz</h5>
+                    </div>
+
+                    <!-- Pass vs Fail meter -->
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                            <span class="text-success">Passed (@Model.PassRate%)</span>
+                            <span class="text-danger">Failed (@(Math.Round(100 - Model.PassRate, 1))%)</span>
+                        </div>
+                        <div class="progress" style="height: 12px; border-radius: 9999px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @Model.PassRate%" aria-valuenow="@Model.PassRate" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: @(100 - Model.PassRate)%" aria-valuenow="@(100 - Model.PassRate)" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Attempts Audit Table -->
+        <div class="qm-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Recent Examination Attempts</h5>
+                <a asp-controller="Admin" asp-action="Results" class="text-primary small fw-semibold text-decoration-none">
+                    View All Attempts <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Student</th>
+                            <th>Quiz</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var attempt in Model.RecentAttempts)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@attempt.StudentName</strong>
+                                    <span class="text-muted small d-block">@attempt.StudentEmail</span>
+                                </td>
+                                <td>@attempt.QuizTitle</td>
+                                <td><strong>@attempt.Score</strong> / @attempt.TotalMarks</td>
+                                <td>
+                                    <span class="fw-bold @(attempt.Status == "Passed" ? "text-success" : "text-danger")">
+                                        @attempt.Percentage%
+                                    </span>
+                                </td>
+                                <td class="text-muted small">@attempt.CompletedAt.ToString("MMM dd, yyyy - hh:mm tt")</td>
+                                <td>
+                                    <span class="badge-status-@attempt.Status.ToLowerInvariant()">
+                                        @attempt.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>

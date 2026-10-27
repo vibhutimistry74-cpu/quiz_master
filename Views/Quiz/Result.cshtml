@@ -1,0 +1,107 @@
+@model QuizMaster.Models.QuizResultViewModel
+@{
+    ViewData["Title"] = "Examination Result - " + Model.Attempt.QuizTitle;
+    bool isPassed = Model.Attempt.Status == "Passed";
+    double circumference = 2 * Math.PI * 40; // r=40
+    double dashOffset = circumference - (circumference * Model.Attempt.Percentage / 100);
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="result-hero">
+                <!-- Trophy Icon or Failure alert icon -->
+                <div class="mb-3">
+                    @if (isPassed)
+                    {
+                        <div class="d-inline-flex p-3 rounded-circle bg-success bg-opacity-10 text-success mb-2">
+                            <i class="bi bi-trophy-fill" style="font-size: 3.5rem;"></i>
+                        </div>
+                        <h2 class="display-6 fw-bold text-dark mb-1">QUIZ COMPLETED!</h2>
+                        <span class="badge-status-passed fs-6 px-4 py-2">
+                            <i class="bi bi-check-circle-fill"></i> PASSED
+                        </span>
+                    }
+                    else
+                    {
+                        <div class="d-inline-flex p-3 rounded-circle bg-danger bg-opacity-10 text-danger mb-2">
+                            <i class="bi bi-x-octagon-fill" style="font-size: 3.5rem;"></i>
+                        </div>
+                        <h2 class="display-6 fw-bold text-dark mb-1">QUIZ COMPLETED</h2>
+                        <span class="badge-status-failed fs-6 px-4 py-2">
+                            <i class="bi bi-x-circle-fill"></i> FAILED
+                        </span>
+                    }
+                </div>
+
+                <p class="text-muted mb-4">
+                    Assessment for <strong class="text-dark">@Model.Attempt.QuizTitle</strong> completed by <strong>@Model.Attempt.StudentName</strong>.
+                </p>
+
+                <!-- SVG Circular Score Ring -->
+                <div class="score-circle-wrapper">
+                    <svg class="score-circle-svg" viewBox="0 0 100 100">
+                        <circle class="score-circle-bg" cx="50" cy="50" r="40"></circle>
+                        <circle class="@(isPassed ? "score-circle-fill-pass" : "score-circle-fill-fail")"
+                                cx="50" cy="50" r="40"
+                                stroke-dasharray="@circumference"
+                                stroke-dashoffset="@dashOffset"></circle>
+                    </svg>
+                    <div class="score-text-inner">
+                        <div class="score-text-pct @(isPassed ? "text-success" : "text-danger")">
+                            @Model.Attempt.Percentage%
+                        </div>
+                        <div class="score-text-sub">
+                            @Model.Attempt.Score / @Model.Attempt.TotalMarks Marks
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 Performance Metric Cards -->
+                <div class="row g-3 text-center mb-4">
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 border rounded-3 bg-light">
+                            <div class="text-success mb-1 fs-4"><i class="bi bi-check-circle-fill"></i></div>
+                            <h4 class="fw-bold mb-0 text-success">@Model.Attempt.CorrectAnswers</h4>
+                            <span class="text-muted small">Correct</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 border rounded-3 bg-light">
+                            <div class="text-danger mb-1 fs-4"><i class="bi bi-x-circle-fill"></i></div>
+                            <h4 class="fw-bold mb-0 text-danger">@Model.Attempt.WrongAnswers</h4>
+                            <span class="text-muted small">Wrong</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 border rounded-3 bg-light">
+                            <div class="text-warning mb-1 fs-4"><i class="bi bi-dash-circle-fill"></i></div>
+                            <h4 class="fw-bold mb-0 text-warning-emphasis">@Model.Attempt.Unanswered</h4>
+                            <span class="text-muted small">Unanswered</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 border rounded-3 bg-light">
+                            <div class="text-primary mb-1 fs-4"><i class="bi bi-stopwatch-fill"></i></div>
+                            <h4 class="fw-bold mb-0 text-primary">@((Model.Attempt.TimeSpentSeconds / 60).ToString("00")):@((Model.Attempt.TimeSpentSeconds % 60).ToString("00"))</h4>
+                            <span class="text-muted small">Time Taken</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a asp-controller="Quiz" asp-action="Review" asp-route-attemptId="@Model.Attempt.Id" class="btn btn-qm-primary btn-lg">
+                        <i class="bi bi-list-check"></i> Review Answers
+                    </a>
+                    <a asp-controller="Quiz" asp-action="Instructions" asp-route-id="@Model.Attempt.QuizId" class="btn btn-qm-secondary btn-lg">
+                        <i class="bi bi-arrow-repeat"></i> Try Again
+                    </a>
+                    <a asp-controller="Student" asp-action="Dashboard" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-grid-fill"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,238 @@
+@model QuizMaster.Models.QuizPlayViewModel
+@{
+    ViewData["Title"] = $"{Model.Quiz.Title} - Question {Model.CurrentIndex + 1} of {Model.TotalQuestions}";
+    var currentQ = Model.CurrentQuestion;
+    int currentQNum = Model.CurrentIndex + 1;
+    double progressPercent = Math.Round(((double)currentQNum / Model.TotalQuestions) * 100, 0);
+
+    // Get selected answer for current question if any
+    Model.Answers.TryGetValue(currentQ.Id, out var currentSelectedAnswer);
+}
+
+<!-- Sticky Quiz Top Header Bar -->
+<div class="quiz-header-bar">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <span class="badge-category mb-1">@Model.Quiz.Category</span>
+                <h4 class="fw-bold mb-0 text-dark">@Model.Quiz.Title</h4>
+            </div>
+
+            <!-- Prominent Countdown Timer -->
+            <div class="d-flex align-items-center gap-3">
+                <div class="timer-pill" id="timerPill">
+                    <i class="bi bi-clock-history"></i>
+                    <span id="timerDisplay">--:--</span>
+                </div>
+
+                <button type="button" class="btn btn-outline-danger fw-semibold btn-sm" data-bs-toggle="modal" data-bs-target="#submitConfirmModal" onclick="prepareSubmitModal(@Model.TotalQuestions)">
+                    <i class="bi bi-send-check"></i> Submit Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="d-flex justify-content-between align-items-center mt-2 small text-muted">
+            <span>Question <strong>@currentQNum</strong> of <strong>@Model.TotalQuestions</strong></span>
+            <span class="fw-bold text-primary">@progressPercent% Completed</span>
+        </div>
+        <div class="quiz-progress-track">
+            <div class="quiz-progress-fill" style="width: @progressPercent%;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Question and Options Area -->
+        <div class="col-lg-8">
+            <div class="question-container">
+                <div class="question-meta">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold">
+                        Question #@currentQNum
+                    </span>
+                    <span class="badge bg-light text-muted border px-2 py-1">
+                        <i class="bi bi-star-fill text-warning"></i> @currentQ.Marks Mark@(currentQ.Marks > 1 ? "s" : "")
+                    </span>
+                </div>
+
+                <h3 class="question-text">
+                    @currentQ.QuestionText
+                </h3>
+
+                <!-- Options -->
+                <div class="options-grid mb-4">
+                    <!-- Option A -->
+                    <label class="option-label @(string.Equals(currentSelectedAnswer, "A", StringComparison.OrdinalIgnoreCase) ? "selected" : "")" data-qid="@currentQ.Id">
+                        <input type="radio" name="selectedOption" value="A" class="option-radio" checked="@(string.Equals(currentSelectedAnswer, "A", StringComparison.OrdinalIgnoreCase))" />
+                        <span class="option-badge">A</span>
+                        <span class="option-text">@currentQ.OptionA</span>
+                    </label>
+
+                    <!-- Option B -->
+                    <label class="option-label @(string.Equals(currentSelectedAnswer, "B", StringComparison.OrdinalIgnoreCase) ? "selected" : "")" data-qid="@currentQ.Id">
+                        <input type="radio" name="selectedOption" value="B" class="option-radio" checked="@(string.Equals(currentSelectedAnswer, "B", StringComparison.OrdinalIgnoreCase))" />
+                        <span class="option-badge">B</span>
+                        <span class="option-text">@currentQ.OptionB</span>
+                    </label>
+
+                    <!-- Option C -->
+                    <label class="option-label @(string.Equals(currentSelectedAnswer, "C", StringComparison.OrdinalIgnoreCase) ? "selected" : "")" data-qid="@currentQ.Id">
+                        <input type="radio" name="selectedOption" value="C" class="option-radio" checked="@(string.Equals(currentSelectedAnswer, "C", StringComparison.OrdinalIgnoreCase))" />
+                        <span class="option-badge">C</span>
+                        <span class="option-text">@currentQ.OptionC</span>
+                    </label>
+
+                    <!-- Option D -->
+                    <label class="option-label @(string.Equals(currentSelectedAnswer, "D", StringComparison.OrdinalIgnoreCase) ? "selected" : "")" data-qid="@currentQ.Id">
+                        <input type="radio" name="selectedOption" value="D" class="option-radio" checked="@(string.Equals(currentSelectedAnswer, "D", StringComparison.OrdinalIgnoreCase))" />
+                        <span class="option-badge">D</span>
+                        <span class="option-text">@currentQ.OptionD</span>
+                    </label>
+                </div>
+
+                <!-- Navigation Action Buttons -->
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top flex-wrap gap-2">
+                    <div>
+                        @if (Model.CurrentIndex > 0)
+                        {
+                            <a asp-controller="Quiz" asp-action="Play" asp-route-id="@Model.Quiz.Id" asp-route-qIndex="@(Model.CurrentIndex - 1)" class="btn btn-qm-secondary">
+                                <i class="bi bi-chevron-left"></i> Previous
+                            </a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-qm-secondary" disabled>
+                                <i class="bi bi-chevron-left"></i> Previous
+                            </button>
+                        }
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        @if (Model.CurrentIndex < Model.TotalQuestions - 1)
+                        {
+                            <a asp-controller="Quiz" asp-action="Play" asp-route-id="@Model.Quiz.Id" asp-route-qIndex="@(Model.CurrentIndex + 1)" class="btn btn-qm-primary">
+                                Next <i class="bi bi-chevron-right"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success fw-bold px-4" data-bs-toggle="modal" data-bs-target="#submitConfirmModal" onclick="prepareSubmitModal(@Model.TotalQuestions)">
+                                <i class="bi bi-check-circle-fill"></i> Finish & Submit
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question Navigator Palette Panel -->
+        <div class="col-lg-4">
+            <div class="navigator-box">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Question Navigator</h5>
+                    <span class="badge bg-light text-muted border">@Model.TotalQuestions Total</span>
+                </div>
+
+                <div class="navigator-grid">
+                    @for (int i = 0; i < Model.TotalQuestions; i++)
+                    {
+                        var qItem = Model.Questions[i];
+                        bool isCurrent = (i == Model.CurrentIndex);
+                        bool isAnswered = Model.Answers.ContainsKey(qItem.Id) && !string.IsNullOrWhiteSpace(Model.Answers[qItem.Id]);
+
+                        string stateClass = isCurrent ? "current" : (isAnswered ? "answered" : "unanswered");
+
+                        <a asp-controller="Quiz" asp-action="Play" asp-route-id="@Model.Quiz.Id" asp-route-qIndex="@i"
+                           class="nav-pill @stateClass"
+                           data-question-id="@qItem.Id"
+                           title="Go to Question @(i + 1)">
+                            @(i + 1)
+                        </a>
+                    }
+                </div>
+
+                <!-- Navigator Legend -->
+                <div class="navigator-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot" style="background-color: var(--primary);"></span>
+                        <span>Current</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot" style="background-color: var(--success);"></span>
+                        <span>Answered</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot" style="background-color: #cbd5e1;"></span>
+                        <span>Unanswered</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top">
+                    <button type="button" class="btn btn-qm-primary w-100 justify-content-center" data-bs-toggle="modal" data-bs-target="#submitConfirmModal" onclick="prepareSubmitModal(@Model.TotalQuestions)">
+                        <i class="bi bi-send-check"></i> Submit Examination
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Actual Form for Quiz Submission -->
+<form id="quizSubmitForm" asp-controller="Quiz" asp-action="Submit" asp-route-id="@Model.Quiz.Id" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+<!-- Submit Confirmation Modal -->
+<div class="modal fade" id="submitConfirmModal" tabindex="-1" aria-labelledby="submitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="submitModalLabel">Submit Examination?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="text-muted mb-4">
+                    Are you sure you want to finalize and submit your examination? Once submitted, your score will be calculated and answers locked.
+                </p>
+
+                <!-- Status Summary Cards -->
+                <div class="row g-3 text-center mb-3">
+                    <div class="col-6">
+                        <div class="p-3 border rounded-3 bg-success bg-opacity-10 text-success">
+                            <h3 class="fw-bold mb-0" id="modalAnsweredCount">0</h3>
+                            <span class="small fw-semibold">Answered</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border rounded-3 bg-warning bg-opacity-10 text-warning-emphasis">
+                            <h3 class="fw-bold mb-0" id="modalUnansweredCount">0</h3>
+                            <span class="small fw-semibold">Unanswered</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-qm-secondary" data-bs-dismiss="modal">
+                    Continue Quiz
+                </button>
+                <button type="button" class="btn btn-success fw-bold px-4" onclick="document.getElementById('quizSubmitForm').submit();">
+                    <i class="bi bi-check-circle-fill"></i> Submit Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/quiz.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Initialize real-time timer with auto-submit
+            initQuizTimer(@Model.RemainingSeconds, 'quizSubmitForm');
+
+            // 2. Setup async option selection & auto-save
+            setupOptionSelection(@Model.Quiz.Id, @currentQ.Id);
+        });
+    </script>
+}

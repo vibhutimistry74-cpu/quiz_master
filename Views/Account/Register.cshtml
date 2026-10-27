@@ -1,0 +1,96 @@
+@model QuizMaster.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Student Registration";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="text-center mb-4">
+                <div class="brand-icon mx-auto mb-3" style="width: 52px; height: 52px; font-size: 1.6rem; border-radius: 12px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <h2 class="fw-bold mb-1">Join QuizMaster</h2>
+                <p class="text-muted">Create your free student examination account</p>
+            </div>
+
+            <div class="qm-card p-4 p-md-5">
+                <form asp-controller="Account" asp-action="Register" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small mb-3" role="alert"></div>
+
+                    <!-- Full Name -->
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label">Full Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-person text-muted"></i>
+                            </span>
+                            <input asp-for="FullName" class="form-control border-start-0" placeholder="e.g. Alex Johnson" autofocus />
+                        </div>
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-envelope text-muted"></i>
+                            </span>
+                            <input asp-for="Email" class="form-control border-start-0" placeholder="name@college.edu" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-lock text-muted"></i>
+                            </span>
+                            <input asp-for="Password" id="regPassword" type="password" class="form-control border-start-0 border-end-0" placeholder="Minimum 6 characters" />
+                            <button class="btn btn-outline-secondary border-start-0 btn-toggle-password" type="button" data-target="regPassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-shield-lock text-muted"></i>
+                            </span>
+                            <input asp-for="ConfirmPassword" id="regConfirmPassword" type="password" class="form-control border-start-0 border-end-0" placeholder="Re-type your password" />
+                            <button class="btn btn-outline-secondary border-start-0 btn-toggle-password" type="button" data-target="regConfirmPassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-qm-primary w-100 justify-content-center py-2 mb-3">
+                        <i class="bi bi-person-check-fill"></i> Complete Registration
+                    </button>
+
+                    <div class="text-center">
+                        <span class="text-muted small">Already have an account?</span>
+                        <a asp-controller="Account" asp-action="Login" class="text-primary fw-semibold small text-decoration-none ms-1">
+                            Sign in here
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

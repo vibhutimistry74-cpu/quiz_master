@@ -1,0 +1,145 @@
+@model QuizMaster.Models.QuizFormViewModel
+@{
+    ViewData["Title"] = "Edit Quiz - " + Model.Title;
+    var categories = ViewBag.Categories as List<string> ?? new List<string>();
+    var difficulties = ViewBag.Difficulties as List<string> ?? new List<string>();
+}
+
+<div class="admin-layout-wrapper">
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-shield-lock-fill text-warning fs-4"></i>
+                <div>
+                    <h6 class="text-white fw-bold mb-0">Admin Portal</h6>
+                    <span class="text-muted small">System Operations</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="admin-sidebar-nav">
+            <a asp-controller="Admin" asp-action="Dashboard" class="admin-nav-item">
+                <i class="bi bi-speedometer2 admin-nav-icon"></i> Dashboard
+            </a>
+            <a asp-controller="Admin" asp-action="Quizzes" class="admin-nav-item active">
+                <i class="bi bi-journal-text admin-nav-icon"></i> Manage Quizzes
+            </a>
+            <a asp-controller="Admin" asp-action="Users" class="admin-nav-item">
+                <i class="bi bi-people admin-nav-icon"></i> Manage Students
+            </a>
+            <a asp-controller="Admin" asp-action="Results" class="admin-nav-item">
+                <i class="bi bi-bar-chart-line admin-nav-icon"></i> Examination Results
+            </a>
+            <a asp-controller="Leaderboard" asp-action="Index" class="admin-nav-item">
+                <i class="bi bi-trophy admin-nav-icon"></i> View Leaderboard
+            </a>
+            <div class="border-top border-secondary border-opacity-25 my-2"></div>
+            <a asp-controller="Home" asp-action="Index" class="admin-nav-item">
+                <i class="bi bi-house admin-nav-icon"></i> View Public Site
+            </a>
+        </nav>
+    </aside>
+
+    <main class="admin-content-area">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="display-6 fw-bold mb-1">Edit Quiz: @Model.Title</h2>
+                <p class="text-muted mb-0">Update parameters, time limits, or publication status.</p>
+            </div>
+            <a asp-controller="Admin" asp-action="Quizzes" class="btn btn-qm-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Quizzes
+            </a>
+        </div>
+
+        <div class="qm-card p-4 p-md-5" style="max-width: 800px;">
+            <form asp-controller="Admin" asp-action="EditQuiz" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small mb-3"></div>
+
+                <!-- Title -->
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">Quiz Title</label>
+                    <input asp-for="Title" class="form-control" autofocus />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description / Syllabus</label>
+                    <textarea asp-for="Description" rows="3" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <!-- Category -->
+                    <div class="col-md-6">
+                        <label asp-for="Category" class="form-label">Category</label>
+                        <select asp-for="Category" class="form-select">
+                            @foreach (var cat in categories)
+                            {
+                                <option value="@cat" selected="@(Model.Category == cat)">@cat</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Difficulty -->
+                    <div class="col-md-6">
+                        <label asp-for="Difficulty" class="form-label">Difficulty</label>
+                        <select asp-for="Difficulty" class="form-select">
+                            @foreach (var diff in difficulties)
+                            {
+                                <option value="@diff" selected="@(Model.Difficulty == diff)">@diff</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Difficulty" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <!-- Duration -->
+                    <div class="col-md-6">
+                        <label asp-for="DurationMinutes" class="form-label">Duration (Minutes)</label>
+                        <input asp-for="DurationMinutes" type="number" min="1" max="180" class="form-control" />
+                        <span asp-validation-for="DurationMinutes" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Passing Percentage -->
+                    <div class="col-md-6">
+                        <label asp-for="PassingPercentage" class="form-label">Passing Percentage (%)</label>
+                        <input asp-for="PassingPercentage" type="number" min="10" max="100" class="form-control" />
+                        <span asp-validation-for="PassingPercentage" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Image URL -->
+                <div class="mb-3">
+                    <label asp-for="ImageUrl" class="form-label">Image URL / Icon Path</label>
+                    <input asp-for="ImageUrl" class="form-control" />
+                    <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                </div>
+
+                <!-- Active Status -->
+                <div class="mb-4 form-check form-switch">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveSwitch" />
+                    <label class="form-check-label fw-semibold" for="isActiveSwitch">
+                        Active (Quiz visible to students)
+                    </label>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                    <a asp-controller="Admin" asp-action="Quizzes" class="btn btn-qm-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-qm-primary">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

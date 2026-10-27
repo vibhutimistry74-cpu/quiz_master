@@ -1,0 +1,95 @@
+@model QuizMaster.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Account Login";
+    var returnUrl = ViewBag.ReturnUrl as string;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="text-center mb-4">
+                <div class="brand-icon mx-auto mb-3" style="width: 52px; height: 52px; font-size: 1.6rem; border-radius: 12px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <h2 class="fw-bold mb-1">Welcome to QuizMaster</h2>
+                <p class="text-muted">Sign in to your account to continue</p>
+            </div>
+
+            <!-- Quick Demo Login Bar -->
+            <div class="card border-primary border-opacity-25 bg-primary bg-opacity-10 mb-4 rounded-3 p-3 text-center">
+                <span class="small fw-bold text-primary mb-2 d-block">
+                    <i class="bi bi-lightning-charge-fill text-warning"></i> College Demo Quick Fill
+                </span>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" id="btnDemoStudent" class="btn btn-sm btn-light border text-primary fw-semibold shadow-sm">
+                        <i class="bi bi-person"></i> Student Demo
+                    </button>
+                    <button type="button" id="btnDemoAdmin" class="btn btn-sm btn-light border text-warning-emphasis fw-semibold shadow-sm">
+                        <i class="bi bi-shield-lock"></i> Admin Demo
+                    </button>
+                </div>
+            </div>
+
+            <div class="qm-card p-4 p-md-5">
+                <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@returnUrl" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small mb-3" role="alert"></div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-envelope text-muted"></i>
+                            </span>
+                            <input asp-for="Email" id="loginEmail" class="form-control border-start-0" placeholder="name@quizmaster.com" autofocus autocomplete="username" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label asp-for="Password" class="form-label">Password</label>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-lock text-muted"></i>
+                            </span>
+                            <input asp-for="Password" id="loginPassword" type="password" class="form-control border-start-0 border-end-0" placeholder="••••••••" autocomplete="current-password" />
+                            <button class="btn btn-outline-secondary border-start-0 btn-toggle-password" type="button" data-target="loginPassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Remember me -->
+                    <div class="mb-4 form-check">
+                        <input asp-for="RememberMe" class="form-check-input" id="rememberMeCheck" />
+                        <label class="form-check-label text-muted small" for="rememberMeCheck">
+                            Remember my login on this device
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-qm-primary w-100 justify-content-center py-2 mb-3">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In to Account
+                    </button>
+
+                    <div class="text-center">
+                        <span class="text-muted small">Don't have an account?</span>
+                        <a asp-controller="Account" asp-action="Register" class="text-primary fw-semibold small text-decoration-none ms-1">
+                            Register as Student
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

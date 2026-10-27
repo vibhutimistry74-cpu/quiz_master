@@ -1,0 +1,173 @@
+@model List<QuizMaster.Models.QuizAttempt>
+@{
+    ViewData["Title"] = "Candidate Examination Results";
+    var quizzes = ViewBag.Quizzes as List<QuizMaster.Models.Quiz> ?? new List<QuizMaster.Models.Quiz>();
+    int? selectedQuizId = ViewBag.SelectedQuizId as int?;
+    string? selectedStatus = ViewBag.SelectedStatus as string;
+    string? searchTerm = ViewBag.SearchTerm as string;
+}
+
+<div class="admin-layout-wrapper">
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-shield-lock-fill text-warning fs-4"></i>
+                <div>
+                    <h6 class="text-white fw-bold mb-0">Admin Portal</h6>
+                    <span class="text-muted small">System Operations</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="admin-sidebar-nav">
+            <a asp-controller="Admin" asp-action="Dashboard" class="admin-nav-item">
+                <i class="bi bi-speedometer2 admin-nav-icon"></i> Dashboard
+            </a>
+            <a asp-controller="Admin" asp-action="Quizzes" class="admin-nav-item">
+                <i class="bi bi-journal-text admin-nav-icon"></i> Manage Quizzes
+            </a>
+            <a asp-controller="Admin" asp-action="Users" class="admin-nav-item">
+                <i class="bi bi-people admin-nav-icon"></i> Manage Students
+            </a>
+            <a asp-controller="Admin" asp-action="Results" class="admin-nav-item active">
+                <i class="bi bi-bar-chart-line admin-nav-icon"></i> Examination Results
+            </a>
+            <a asp-controller="Leaderboard" asp-action="Index" class="admin-nav-item">
+                <i class="bi bi-trophy admin-nav-icon"></i> View Leaderboard
+            </a>
+            <div class="border-top border-secondary border-opacity-25 my-2"></div>
+            <a asp-controller="Home" asp-action="Index" class="admin-nav-item">
+                <i class="bi bi-house admin-nav-icon"></i> View Public Site
+            </a>
+        </nav>
+    </aside>
+
+    <main class="admin-content-area">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h2 class="display-6 fw-bold mb-1">Examination Audit Logs</h2>
+                <p class="text-muted mb-0">Auditing all submitted examination attempts and calculated candidate marks.</p>
+            </div>
+            <span class="badge bg-light text-muted border px-3 py-2 fs-6">
+                Total Attempts: @Model.Count
+            </span>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="qm-card p-3 mb-4">
+            <form asp-controller="Admin" asp-action="Results" method="get">
+                <div class="row g-2 align-items-center">
+                    <div class="col-lg-4 col-md-12">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" name="search" value="@searchTerm" class="form-control border-start-0" placeholder="Search by student name, email, or quiz..." />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-5 col-sm-6">
+                        <select name="quizId" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Examinations</option>
+                            @foreach (var q in quizzes)
+                            {
+                                <option value="@q.Id" selected="@(selectedQuizId == q.Id)">@q.Title</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <select name="status" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Statuses</option>
+                            <option value="Passed" selected="@(selectedStatus == "Passed")">Passed Only</option>
+                            <option value="Failed" selected="@(selectedStatus == "Failed")">Failed Only</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 col-sm-12 d-flex gap-1">
+                        <button type="submit" class="btn btn-qm-primary w-100 p-2 justify-content-center">
+                            <i class="bi bi-funnel-fill"></i> Filter
+                        </button>
+                        @if (!string.IsNullOrEmpty(searchTerm) || selectedQuizId.HasValue || !string.IsNullOrEmpty(selectedStatus))
+                        {
+                            <a asp-controller="Admin" asp-action="Results" class="btn btn-outline-secondary p-2" title="Clear Filters">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Table -->
+        <div class="qm-card p-4">
+            @if (Model.Count == 0)
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-journal-x text-muted" style="font-size: 3.5rem;"></i>
+                    <h4 class="fw-bold mt-3 mb-1">No examination attempts match query</h4>
+                    <p class="text-muted small mb-3">Adjust your search or status filter to see other attempts.</p>
+                    <a asp-controller="Admin" asp-action="Results" class="btn btn-qm-primary btn-sm">Clear Filter</a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 admin-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Quiz</th>
+                                <th>Score</th>
+                                <th>Percentage</th>
+                                <th>Correct</th>
+                                <th>Wrong</th>
+                                <th>Date & Time</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong class="text-dark">@a.StudentName</strong>
+                                        <span class="text-muted small d-block">@a.StudentEmail</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge-category">@a.QuizTitle</span>
+                                    </td>
+                                    <td><strong>@a.Score</strong> / @a.TotalMarks</td>
+                                    <td>
+                                        <span class="fw-bold @(a.Status == "Passed" ? "text-success" : "text-danger")">
+                                            @a.Percentage%
+                                        </span>
+                                    </td>
+                                    <td><span class="text-success"><i class="bi bi-check-circle"></i> @a.CorrectAnswers</span></td>
+                                    <td><span class="text-danger"><i class="bi bi-x-circle"></i> @a.WrongAnswers</span></td>
+                                    <td class="text-muted small">@a.CompletedAt.ToString("MMM dd, yyyy - hh:mm tt")</td>
+                                    <td>
+                                        <span class="badge-status-@a.Status.ToLowerInvariant()">
+                                            @a.Status
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="d-inline-flex gap-2">
+                                            <a asp-controller="Quiz" asp-action="Result" asp-route-attemptId="@a.Id" class="btn btn-sm btn-qm-secondary" title="View Scorecard" target="_blank">
+                                                <i class="bi bi-trophy"></i> Result
+                                            </a>
+                                            <a asp-controller="Quiz" asp-action="Review" asp-route-attemptId="@a.Id" class="btn btn-sm btn-qm-outline-primary" title="Review Answers" target="_blank">
+                                                <i class="bi bi-list-check"></i> Review
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </main>
+</div>

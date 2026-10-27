@@ -1,0 +1,149 @@
+@model QuizMaster.Models.QuizFilterViewModel
+@{
+    ViewData["Title"] = "Available Quizzes";
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+        <div>
+            <span class="badge-category mb-2">Examination Catalog</span>
+            <h1 class="display-6 fw-bold mb-1">Available Quizzes</h1>
+            <p class="text-muted mb-0">Browse through standardized tests, verify your competence, and earn certifications.</p>
+        </div>
+        <div class="text-muted small">
+            Showing <strong class="text-dark">@Model.Quizzes.Count</strong> Active Quizzes
+        </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="qm-card p-3 mb-4">
+        <form asp-controller="Quiz" asp-action="Index" method="get">
+            <div class="row g-2 align-items-center">
+                <!-- Search -->
+                <div class="col-lg-4 col-md-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" name="search" value="@Model.SearchTerm" class="form-control border-start-0" placeholder="Search by quiz title or topic..." />
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <select name="category" class="form-select" onchange="this.form.submit()">
+                        <option value="">All Categories</option>
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat" selected="@(string.Equals(Model.Category, cat, StringComparison.OrdinalIgnoreCase))">@cat</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Difficulty Filter -->
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <select name="difficulty" class="form-select" onchange="this.form.submit()">
+                        <option value="">All Difficulties</option>
+                        @foreach (var diff in Model.Difficulties)
+                        {
+                            <option value="@diff" selected="@(string.Equals(Model.Difficulty, diff, StringComparison.OrdinalIgnoreCase))">@diff</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Sort By -->
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <select name="sortBy" class="form-select" onchange="this.form.submit()">
+                        <option value="Newest" selected="@(Model.SortBy == "Newest")">Newest First</option>
+                        <option value="Difficulty" selected="@(Model.SortBy == "Difficulty")">Difficulty (Easy-Hard)</option>
+                        <option value="Questions" selected="@(Model.SortBy == "Questions")">Most Questions</option>
+                        <option value="Title" selected="@(Model.SortBy == "Title")">Title (A-Z)</option>
+                    </select>
+                </div>
+
+                <!-- Submit / Clear -->
+                <div class="col-lg-1 col-sm-6 d-flex gap-1">
+                    <button type="submit" class="btn btn-qm-primary w-100 p-2 justify-content-center" title="Search">
+                        <i class="bi bi-funnel-fill"></i>
+                    </button>
+                    @if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.Category) || !string.IsNullOrEmpty(Model.Difficulty))
+                    {
+                        <a asp-controller="Quiz" asp-action="Index" class="btn btn-outline-secondary p-2" title="Clear Filters">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Quiz Grid -->
+    @if (Model.Quizzes.Count == 0)
+    {
+        <div class="qm-card p-5 text-center my-4">
+            <i class="bi bi-search text-muted" style="font-size: 3.5rem;"></i>
+            <h4 class="fw-bold mt-3 mb-1">No quizzes found</h4>
+            <p class="text-muted small mb-4">No examinations match your search or filter criteria. Try adjusting your search term.</p>
+            <a asp-controller="Quiz" asp-action="Index" class="btn btn-qm-primary">
+                Clear Filters
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var quiz in Model.Quizzes)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="qm-card h-100 d-flex flex-column justify-content-between">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="@quiz.ImageUrl" alt="@quiz.Title" width="48" height="48" style="border-radius: 10px;" />
+                                    <span class="badge-category">@quiz.Category</span>
+                                </div>
+                                <span class="badge-difficulty-@quiz.Difficulty.ToLowerInvariant()">
+                                    @quiz.Difficulty
+                                </span>
+                            </div>
+
+                            <h5 class="fw-bold mb-2">@quiz.Title</h5>
+                            <p class="text-muted small mb-3" style="min-height: 40px;">@quiz.Description</p>
+
+                            <div class="row g-2 pt-3 border-top small text-muted">
+                                <div class="col-6 d-flex align-items-center gap-2">
+                                    <i class="bi bi-question-circle text-primary"></i>
+                                    <span><strong>@quiz.TotalQuestions</strong> Questions</span>
+                                </div>
+                                <div class="col-6 d-flex align-items-center gap-2">
+                                    <i class="bi bi-clock text-primary"></i>
+                                    <span><strong>@quiz.DurationMinutes</strong> Minutes</span>
+                                </div>
+                                <div class="col-6 d-flex align-items-center gap-2">
+                                    <i class="bi bi-check2-circle text-success"></i>
+                                    <span>Pass: <strong>@quiz.PassingPercentage%</strong></span>
+                                </div>
+                                <div class="col-6 d-flex align-items-center gap-2">
+                                    <i class="bi bi-award text-warning"></i>
+                                    <span>Instant Result</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 pt-0">
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Quiz" asp-action="Details" asp-route-id="@quiz.Id" class="btn btn-qm-secondary flex-grow-1 justify-content-center">
+                                    Details
+                                </a>
+                                <a asp-controller="Quiz" asp-action="Instructions" asp-route-id="@quiz.Id" class="btn btn-qm-primary flex-grow-1 justify-content-center">
+                                    Start Quiz <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

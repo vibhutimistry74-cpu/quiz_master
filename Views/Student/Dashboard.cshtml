@@ -1,0 +1,187 @@
+@model QuizMaster.Models.StudentDashboardStats
+@{
+    ViewData["Title"] = "Student Dashboard";
+    var studentName = ViewBag.UserName as string ?? "Student";
+}
+
+<div class="container py-4">
+    <!-- Welcome Header -->
+    <div class="p-4 p-md-5 rounded-4 mb-4 text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 60%, #6366f1 100%); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-white bg-opacity-20 text-white mb-2 px-3 py-1 rounded-pill">
+                    <i class="bi bi-mortarboard-fill text-warning me-1"></i> Student Learning Portal
+                </span>
+                <h1 class="display-6 fw-bold text-white mb-2">Welcome back, @studentName!</h1>
+                <p class="lead text-light mb-4" style="max-width: 580px;">
+                    Track your assessment progress, explore recommended examinations, and analyze your performance.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a asp-controller="Quiz" asp-action="Index" class="btn btn-light text-primary fw-bold shadow-sm">
+                        <i class="bi bi-compass"></i> Browse Quizzes
+                    </a>
+                    <a asp-controller="Student" asp-action="History" class="btn btn-outline-light">
+                        <i class="bi bi-clock-history"></i> My Attempt History
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block text-end">
+                <i class="bi bi-trophy text-white text-opacity-25" style="font-size: 8rem;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Stats Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-6">
+            <div class="qm-card p-4 text-center">
+                <div class="category-icon-box bg-primary-light text-primary mb-3">
+                    <i class="bi bi-journal-check"></i>
+                </div>
+                <h3 class="fw-bold mb-1">@Model.QuizzesTaken</h3>
+                <span class="text-muted small text-uppercase fw-semibold">Quizzes Taken</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="qm-card p-4 text-center">
+                <div class="category-icon-box bg-info bg-opacity-10 text-info mb-3">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <h3 class="fw-bold mb-1 text-info">@Model.AverageScore%</h3>
+                <span class="text-muted small text-uppercase fw-semibold">Average Score</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="qm-card p-4 text-center">
+                <div class="category-icon-box bg-warning bg-opacity-10 text-warning mb-3">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-1 text-warning-emphasis">@Model.BestScore%</h3>
+                <span class="text-muted small text-uppercase fw-semibold">Best Score</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="qm-card p-4 text-center">
+                <div class="category-icon-box bg-success bg-opacity-10 text-success mb-3">
+                    <i class="bi bi-patch-check-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-1 text-success">@Model.PassedQuizzes</h3>
+                <span class="text-muted small text-uppercase fw-semibold">Passed Quizzes</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommended Quizzes / Continue Learning -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-0">Recommended Examinations</h4>
+                <p class="text-muted small mb-0">Curated tests ready for your next attempt</p>
+            </div>
+            <a asp-controller="Quiz" asp-action="Index" class="btn-qm-outline-primary btn-sm">
+                View All <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var quiz in Model.RecommendedQuizzes)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="qm-card p-4 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge-category">@quiz.Category</span>
+                                <span class="badge-difficulty-@quiz.Difficulty.ToLowerInvariant()">@quiz.Difficulty</span>
+                            </div>
+                            <h5 class="fw-bold mb-2">@quiz.Title</h5>
+                            <p class="text-muted small mb-3">@quiz.Description</p>
+                            <div class="d-flex gap-3 small text-muted mb-3">
+                                <span><i class="bi bi-question-circle text-primary"></i> @quiz.TotalQuestions Qs</span>
+                                <span><i class="bi bi-clock text-primary"></i> @quiz.DurationMinutes mins</span>
+                                <span><i class="bi bi-check2 text-success"></i> Pass @quiz.PassingPercentage%</span>
+                            </div>
+                        </div>
+                        <a asp-controller="Quiz" asp-action="Details" asp-route-id="@quiz.Id" class="btn btn-qm-primary w-100 justify-content-center">
+                            Start Quiz <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Recent Attempts -->
+    <div class="qm-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">Recent Examination Attempts</h4>
+            <a asp-controller="Student" asp-action="History" class="text-primary fw-semibold small text-decoration-none">
+                Full History <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        @if (Model.RecentAttempts.Count == 0)
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-journal-x text-muted" style="font-size: 3rem;"></i>
+                <h5 class="fw-bold mt-3 mb-1">No quiz attempts yet</h5>
+                <p class="text-muted small mb-3">You haven't attempted any quizzes yet. Explore our catalog to begin!</p>
+                <a asp-controller="Quiz" asp-action="Index" class="btn btn-qm-primary btn-sm">
+                    Browse Quizzes
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Quiz Name</th>
+                            <th>Category</th>
+                            <th>Completed Date</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                            <th>Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var attempt in Model.RecentAttempts)
+                        {
+                            <tr>
+                                <td>
+                                    <strong class="text-dark">@attempt.QuizTitle</strong>
+                                </td>
+                                <td>
+                                    <span class="badge-category">@attempt.Category</span>
+                                </td>
+                                <td class="text-muted small">
+                                    @attempt.CompletedAt.ToLocalTime().ToString("MMM dd, yyyy - hh:mm tt")
+                                </td>
+                                <td>
+                                    <strong>@attempt.Score</strong> / @attempt.TotalMarks
+                                </td>
+                                <td>
+                                    <span class="fw-bold @(attempt.Status == "Passed" ? "text-success" : "text-danger")">
+                                        @attempt.Percentage%
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge-status-@attempt.Status.ToLowerInvariant()">
+                                        <i class="bi @(attempt.Status == "Passed" ? "bi-check-circle-fill" : "bi-x-circle-fill")"></i>
+                                        @attempt.Status
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a asp-controller="Quiz" asp-action="Result" asp-route-attemptId="@attempt.Id" class="btn btn-sm btn-qm-secondary">
+                                        View Result <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
